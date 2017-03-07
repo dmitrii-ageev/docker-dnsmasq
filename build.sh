@@ -1,6 +1,6 @@
 #!/bin/sh
-
-PREVIOUS_VERSION=$(docker images dmitriiageev/dnsmasq | cut -d " " -f4 | grep [0-9] | sort -rn | head -1 )
+PACKAGE_NAME=bind
+PREVIOUS_VERSION=$(docker images dmitriiageev/$PACKAGE_NAME | cut -d " " -f4 | grep [0-9] | sort -rn | head -1 )
 
 if [ ! -z "$1" ]; then
   VERSION="$1"
@@ -22,13 +22,13 @@ else
   VERSION="$MAJOR.$MINOR.$BUILD"
 fi
 
-docker rmi -f dmitriiageev/dnsmasq:latest 
-docker rmi -f dmitriiageev/dnsmasq:$PREVIOUS_VERSION 
+docker rmi -f dmitriiageev/$PACKAGE_NAME:latest 
+docker rmi -f dmitriiageev/$PACKAGE_NAME:$PREVIOUS_VERSION 
 
-docker build -t dmitriiageev/dnsmasq:$VERSION -t dmitriiageev/dnsmasq:latest .
+docker build -t dmitriiageev/$PACKAGE_NAME:$VERSION -t dmitriiageev/$PACKAGE_NAME:latest .
 docker volume rm $(docker volume ls -q) 2>/dev/null
 
-if [ "$1" == "--push" ]; then
-  docker push dmitriiageev/dnsmasq:$VERSION
-  docker push dmitriiageev/dnsmasq:latest
+if [ "$2" == "--push" ]; then
+  docker push dmitriiageev/$PACKAGE_NAME:$VERSION
+  docker push dmitriiageev/$PACKAGE_NAME:latest
 fi
